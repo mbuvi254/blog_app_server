@@ -1,9 +1,7 @@
 import express, {} from 'express';
-import { registerUser, getAllUsers } from '../controllers/userController.js';
-const userRouter = express.Router();
+import { registerUser } from '../controllers/authController.js';
+const authRouter = express.Router();
 // User Registration Route
-userRouter.post('/register', registerUser);
-//User CRUD
-userRouter.get('/', getAllUsers);
-export default userRouter;
+authRouter.post('/register', registerUser);
+export default authRouter;
 //# sourceMappingURL=userRoutes.js.map

@@ -1,15 +1,21 @@
 import "dotenv/config";
+import cors from "cors";
 import express,{type Express,type Request,type Response} from 'express';
-import userRouter from "./routes/userRoutes.js";
-
+import authRouter from "./routes/authRoutes.js";
+import userRouter from "./routes/usersRoutes.js"; 
+import cookieParser from "cookie-parser";
 
 const app: Express= express();
 app.use(express.json());
+app.use(cookieParser());
+app.use(cors({
+  origin: "http://localhost:5000", // your frontend URL
+  credentials: true
+}));
 
-app.get('/',(req:Request,res:Response)=>{
-    res.send('BlogIT App is running');
-});
 
+
+app.use('/auth',authRouter);
 app.use('/users',userRouter);
 
 

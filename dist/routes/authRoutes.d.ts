@@ -1,4 +1,4 @@
 import { type Router } from 'express';
 declare const authRouter: Router;
 export default authRouter;
-//# sourceMappingURL=userRoutes.d.ts.map
+//# sourceMappingURL=authRoutes.d.ts.map
