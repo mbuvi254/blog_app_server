@@ -24,8 +24,28 @@ model User {
   isDeleted Boolean   @default(false)
   dateJoined DateTime @default(now()) @map("createdAt")
   lastUpdated DateTime @updatedAt @map("updatedAt")
+  
+
+  blogs   Blog[]
 
 
 
   @@map("users")
+}
+
+model Blog{
+  id String @id @default(uuid()) @map("id")
+  authorId String @map("authorId")
+  title String @map("title")
+  synopsis String @map("synopsis")
+  featuredImageUrl String ? @map("featuredImageUrl")
+  content String @map("content")
+  isDelete Boolean @default(false) @map("isDeleted") 
+  createdAt DateTime @default(now()) @map("createdAt")
+  lastUpdated DateTime @updatedAt @map("lastUpdated")
+  author User @relation(fields: [authorId],references: [id])
+
+@@map("blogs")
+
+
 }

@@ -10,7 +10,7 @@ export const registerUser = async (req, res) => {
             console.log("All fields required");
             return res.status(400).json({
                 status: "Error",
-                message: "Something Went Wrong"
+                message: "All fields are required"
             });
         }
         //I check if email exists in db

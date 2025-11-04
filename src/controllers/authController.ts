@@ -3,7 +3,6 @@ import {type Request,type Response} from "express"
 import { hashPassword ,checkPasswordStrength, comparePassword} from "./passwordHelpers.js";
 import { generateToken} from "../utils/jwt.js";
 
-//Add Salt
 
 //Authenticated Request Interface
 interface AuthenticatedRequest extends Request {
@@ -12,6 +11,8 @@ interface AuthenticatedRequest extends Request {
     username: string;
   };
 }
+
+
 
 
 //New User Registration Function
@@ -23,7 +24,7 @@ export const registerUser = async (req:Request, res:Response)=>{
             console.log("All fields required");
             return res.status(400).json({
                 status:"Error",
-                message:"Something Went Wrong"
+                message:"All fields are required"
             })
         }
         //I check if email exists in db
@@ -52,7 +53,7 @@ export const registerUser = async (req:Request, res:Response)=>{
             });
         }
 
-        const hashedPassword = await hashPassword(password)
+        const hashedPassword = await hashPassword(password);
 
         const newUser = await client.user.create({data : {username,firstName,lastName,emailAddress,password:hashedPassword},});
         console.log(`User registed ${newUser.username}`)

@@ -3,6 +3,7 @@ import cors from "cors";
 import express,{type Express,type Request,type Response} from 'express';
 import authRouter from "./routes/authRoutes.js";
 import userRouter from "./routes/usersRoutes.js"; 
+import blogRouter from "./routes/blogRoutes.js";
 import cookieParser from "cookie-parser";
 
 const app: Express= express();
@@ -17,6 +18,7 @@ app.use(cors({
 
 app.use('/auth',authRouter);
 app.use('/users',userRouter);
+app.use('/blogs',blogRouter)
 
 
 

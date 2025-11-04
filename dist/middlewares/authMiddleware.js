@@ -1,14 +1,16 @@
-import jwt from "jsonwebtoken";
+import jwt, {} from "jsonwebtoken";
 import express, {} from "express";
-//I load from .env
 const SECRET_KEY = process.env.JWT_SECRET;
 if (!SECRET_KEY) {
     throw new Error("JWT_SECRET is not found");
 }
-// Verify JWT Token Middleware
+// Verify JWT Token Middleware Make sure my users have valid token 
 export function verifyToken(req, res, next) {
     try {
-        const access_token = req.cookies.accessToken || req.headers.authorization?.split(" ")[1];
+        //I Get Token from cookies or headers
+        const access_token = req.cookies.accessToken ||
+            req.headers.authorization?.split(" ")[1];
+        console.log("Access Token:", access_token);
         if (!access_token) {
             return res.status(401).json({
                 status: "Error",
@@ -16,6 +18,7 @@ export function verifyToken(req, res, next) {
             });
         }
         const decoded = jwt.verify(access_token, SECRET_KEY);
+        //add the decoded data to the request 
         req.user = decoded;
         next();
     }
@@ -25,7 +28,7 @@ export function verifyToken(req, res, next) {
             status: "Error",
             message: "Invalid Access Token"
         });
-        return null;
+        // return null;
     }
 }
 ;

@@ -1,8 +1,10 @@
 import bcrypt from "bcryptjs";
 import zxcvbn from "zxcvbn";
+const saltRounds = 10;
+const salt = bcrypt.genSaltSync(saltRounds);
 // Password Hash helper function
 export async function hashPassword(plainPassword) {
-    const hashedPassword = await bcrypt.hash(plainPassword, 12);
+    const hashedPassword = await bcrypt.hash(plainPassword, salt);
     return hashedPassword;
 }
 //Verify
