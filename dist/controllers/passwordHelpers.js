@@ -24,7 +24,6 @@ export async function comparePassword(password, dbPassword) {
         console.log(error);
     }
 }
-;
 // Password Checker
 export const checkPasswordStrength = async (password) => {
     try {

@@ -8,7 +8,7 @@ export const createNewBlog = async (req, res) => {
         if (!authorId || !authorId || !title || !synopsis || !content) {
             return res.status(400).json({
                 status: "Error",
-                message: "Missing fields : AuthorId,title or content"
+                message: "Missing fields : AuthorId,title or content",
             });
         }
         const newBlog = await client.blog.create({
@@ -17,21 +17,21 @@ export const createNewBlog = async (req, res) => {
                 title,
                 synopsis,
                 featuredImageUrl,
-                content
-            }
+                content,
+            },
         });
         console.log("Blog Created", newBlog);
         return res.status(201).json({
             status: "Success",
             message: "Blog Created Successfuly",
-            blog: newBlog
+            blog: newBlog,
         });
     }
     catch (error) {
         console.log("Blog Not Created:", error);
         return res.status(500).json({
             status: "Error",
-            message: "Failed to create blog"
+            message: "Failed to create blog",
         });
     }
 };
@@ -39,7 +39,7 @@ export const getAllBlogs = async (req, res) => {
     try {
         const blogs = await client.blog.findMany({
             where: {
-                isDelete: false
+                isDeleted: false,
             },
             select: {
                 id: true,
@@ -50,10 +50,11 @@ export const getAllBlogs = async (req, res) => {
                 author: {
                     select: {
                         firstName: true,
-                        lastName: true
-                    }
+                        lastName: true,
+                        emailAddress: true,
+                    },
                 },
-            }
+            },
         });
         if (!blogs.length) {
             return res.status(404).json({
@@ -64,7 +65,7 @@ export const getAllBlogs = async (req, res) => {
         return res.status(200).json({
             status: "success",
             message: `Found:${blogs.length} blog(s)`,
-            blogs: blogs
+            blogs: blogs,
         });
     }
     catch (error) {
@@ -81,13 +82,13 @@ export const getUserBlogs = async (req, res) => {
             console.log("Unauthorized: Missing author ID");
             return res.status(401).json({
                 status: "Error",
-                message: "Unauthorized: Missing author ID"
+                message: "Unauthorized: Missing author ID",
             });
         }
         const blogs = await client.blog.findMany({
             where: {
-                authorId: authorId,
-                isDelete: false
+                authorId: String(authorId),
+                isDeleted: false,
             },
             select: {
                 id: true,
@@ -95,31 +96,75 @@ export const getUserBlogs = async (req, res) => {
                 title: true,
                 synopsis: true,
                 featuredImageUrl: true,
+                isPublished: true,
                 createdAt: true,
                 author: {
                     select: {
                         firstName: true,
-                        lastName: true
-                    }
+                        lastName: true,
+                        emailAddress: true,
+                    },
                 },
-            }
+            },
         });
-        if (blogs.length == 0) {
-            return res.status(404).json({
-                status: "Error",
-                message: "No blogs found",
-            });
-        }
         return res.status(200).json({
             status: "success",
-            message: `Blogs found:${blogs.length}`,
-            blogs: blogs
+            message: `Blogs found: ${blogs.length}`,
+            blogs: blogs,
         });
     }
     catch (error) {
-        return res.status(404).json({
+        console.error("Error fetching blogs:", error);
+        return res.status(500).json({
             status: "Error",
-            message: "No blogs found",
+            message: "Internal server error",
+        });
+    }
+};
+export const getPublishedBlogs = async (req, res) => {
+    try {
+        const authorId = req.user?.id;
+        if (!authorId) {
+            console.log("Unauthorized: Missing author ID");
+            return res.status(401).json({
+                status: "Error",
+                message: "Unauthorized: Missing author ID",
+            });
+        }
+        const blogs = await client.blog.findMany({
+            where: {
+                authorId: String(authorId),
+                isDeleted: false,
+                isPublished: true,
+            },
+            select: {
+                id: true,
+                authorId: true,
+                title: true,
+                synopsis: true,
+                featuredImageUrl: true,
+                isPublished: true,
+                createdAt: true,
+                author: {
+                    select: {
+                        firstName: true,
+                        lastName: true,
+                        emailAddress: true,
+                    },
+                },
+            },
+        });
+        return res.status(200).json({
+            status: "success",
+            message: `Blogs found: ${blogs.length}`,
+            blogs: blogs,
+        });
+    }
+    catch (error) {
+        console.error("Error fetching blogs:", error);
+        return res.status(500).json({
+            status: "Error",
+            message: "Internal server error",
         });
     }
 };
@@ -131,7 +176,7 @@ export const getBlog = async (req, res) => {
         const blog = await client.blog.findUnique({
             where: {
                 id: blogId,
-                isDelete: false
+                isDeleted: false,
             },
             select: {
                 id: true,
@@ -139,14 +184,16 @@ export const getBlog = async (req, res) => {
                 title: true,
                 synopsis: true,
                 featuredImageUrl: true,
+                isPublished: true,
                 createdAt: true,
                 author: {
                     select: {
                         firstName: true,
-                        lastName: true
-                    }
+                        lastName: true,
+                        emailAddress: true,
+                    },
                 },
-            }
+            },
         });
         if (!blog) {
             return res.status(404).json({
@@ -154,7 +201,6 @@ export const getBlog = async (req, res) => {
                 message: "No blog found",
             });
         }
-        ;
         //deny user not author
         if (blog.authorId !== authorId) {
             return res.status(403).json({ message: "Unauthorized" });
@@ -162,7 +208,7 @@ export const getBlog = async (req, res) => {
         return res.status(200).json({
             status: "success",
             message: `Blog found`,
-            blogs: blog
+            blogs: blog,
         });
     }
     catch (error) {
@@ -186,15 +232,17 @@ export const updateBlog = async (req, res) => {
                 title: true,
                 synopsis: true,
                 featuredImageUrl: true,
+                isPublished: true,
                 createdAt: true,
                 lastUpdated: true,
                 author: {
                     select: {
                         firstName: true,
-                        lastName: true
-                    }
+                        lastName: true,
+                        emailAddress: true,
+                    },
                 },
-            }
+            },
         });
         if (!blog) {
             return res.status(404).json({ message: "Blog not found" });
@@ -212,21 +260,21 @@ export const updateBlog = async (req, res) => {
                 synopsis,
                 featuredImageUrl,
                 content,
-                lastUpdated: new Date()
-            }
+                lastUpdated: new Date(),
+            },
         });
         console.log("Blog Created", updatedBlog);
         return res.status(200).json({
             status: "Success",
             message: "Blog Updated Successfuly",
-            user: updatedBlog
+            user: updatedBlog,
         });
     }
     catch (error) {
         console.log("Blog Updated Created:", error);
         return res.status(500).json({
             status: "Error",
-            message: "Blog Not Created"
+            message: "Blog Not Created",
         });
     }
 };
@@ -246,7 +294,7 @@ export const trashBlog = async (req, res) => {
         }
         const trashBlog = await client.blog.update({
             where: { id: blogId },
-            data: { isDelete: true }
+            data: { isDeleted: true },
         });
         console.log("Blog Trashed");
         return res.status(201).json({
@@ -258,7 +306,7 @@ export const trashBlog = async (req, res) => {
         console.log("Blog Updated Created:", error);
         return res.status(500).json({
             status: "Error",
-            message: "Blog Not Created"
+            message: "Blog Not Created",
         });
     }
 };
@@ -278,7 +326,7 @@ export const restoreBlog = async (req, res) => {
         }
         const restoredBlog = await client.blog.update({
             where: { id: blogId },
-            data: { isDelete: false }
+            data: { isDeleted: false },
         });
         console.log("Blog Restored");
         return res.status(201).json({
@@ -290,7 +338,7 @@ export const restoreBlog = async (req, res) => {
         console.log("Blog Updated Created:", error);
         return res.status(500).json({
             status: "Error",
-            message: "Blog Not Created"
+            message: "Blog Not Created",
         });
     }
 };
@@ -310,8 +358,8 @@ export const deleteBlog = async (req, res) => {
         }
         const blogDeleted = await client.blog.delete({
             where: {
-                id: blogId
-            }
+                id: blogId,
+            },
         });
         if (!blogDeleted) {
             return res.status(404).json({
@@ -319,10 +367,9 @@ export const deleteBlog = async (req, res) => {
                 message: "No blogs found",
             });
         }
-        ;
         return res.status(200).json({
             status: "success",
-            message: `Blogs found Deleted`
+            message: `Blogs found Deleted`,
         });
     }
     catch (error) {
@@ -335,7 +382,7 @@ export const deleteBlog = async (req, res) => {
 export const getTrashedBlogs = async (req, res) => {
     try {
         const blogs = await client.blog.findMany({
-            where: { isDelete: true },
+            where: { isDeleted: true },
             select: {
                 id: true,
                 title: true,
@@ -345,10 +392,10 @@ export const getTrashedBlogs = async (req, res) => {
                 author: {
                     select: {
                         firstName: true,
-                        lastName: true
-                    }
+                        lastName: true,
+                    },
                 },
-            }
+            },
         });
         if (!blogs.length) {
             return res.status(404).json({
@@ -359,13 +406,171 @@ export const getTrashedBlogs = async (req, res) => {
         return res.status(200).json({
             status: "success",
             message: `Found:${blogs.length} blog(s)`,
-            blogs: blogs
+            blogs: blogs,
         });
     }
     catch (error) {
         return res.status(500).json({
             status: "Error",
             message: "No blogs found",
+        });
+    }
+};
+export const getBlogDrafts = async (req, res) => {
+    try {
+        const blogs = await client.blog.findMany({
+            where: { isPublished: false, isDeleted: false },
+            select: {
+                id: true,
+                authorId: true,
+                title: true,
+                synopsis: true,
+                featuredImageUrl: true,
+                isPublished: true,
+                isDeleted: true,
+                createdAt: true,
+                lastUpdated: true,
+                author: { select: { firstName: true, lastName: true } },
+            },
+        });
+        return res.status(200).json({
+            status: "success",
+            message: `Found ${blogs.length} blog(s)`,
+            blogs,
+        });
+    }
+    catch (error) {
+        return res.status(500).json({
+            status: "Error",
+            message: "Failed to fetch blogs",
+        });
+    }
+};
+export const publishBlog = async (req, res) => {
+    try {
+        const { id } = req.params;
+        const blogId = String(id);
+        const authorId = req.user?.id;
+        //I get the blog
+        const blog = await client.blog.findUnique({ where: { id: blogId } });
+        if (!blog) {
+            return res.status(404).json({ message: "Blog not found" });
+        }
+        //deny delete if user not author
+        if (blog.authorId !== authorId) {
+            return res.status(403).json({ message: "Unauthorized" });
+        }
+        const blogPublished = await client.blog.update({
+            where: { id: blogId },
+            data: { isPublished: true },
+        });
+        console.log("Blog Published");
+        return res.status(201).json({
+            status: "Success",
+            message: "Blog Published Successfuly",
+        });
+    }
+    catch (error) {
+        console.log("Blog Published Created:", error);
+        return res.status(500).json({
+            status: "Error",
+            message: "Blog Not Created",
+        });
+    }
+};
+//Unpublish Blog
+export const unpublishBlog = async (req, res) => {
+    try {
+        const { id } = req.params;
+        const blogId = String(id);
+        const authorId = req.user?.id;
+        //I get the blog
+        const blog = await client.blog.findUnique({ where: { id: blogId } });
+        if (!blog) {
+            return res.status(404).json({ message: "Blog not found" });
+        }
+        //deny delete if user not author
+        if (blog.authorId !== authorId) {
+            return res.status(403).json({ message: "Unauthorized" });
+        }
+        const blogPublished = await client.blog.update({
+            where: { id: blogId },
+            data: { isPublished: false },
+        });
+        console.log("Blog Published");
+        return res.status(201).json({
+            status: "Success",
+            message: "Blog Published Successfuly",
+        });
+    }
+    catch (error) {
+        console.log("Blog Published Created:", error);
+        return res.status(500).json({
+            status: "Error",
+            message: "Blog Not Created",
+        });
+    }
+};
+export const createComment = async (req, res) => {
+    try {
+        const { blogId, comment } = req.body;
+        const userId = req.user?.id;
+        if (!userId || !blogId || !comment) {
+            return res.status(400).json({
+                status: "Error",
+                message: "Missing fields: userId, blogId or comment",
+            });
+        }
+        const newComment = await client.comment.create({
+            data: {
+                blogId,
+                userId,
+                comment,
+            },
+        });
+        return res.status(201).json({
+            status: "Success",
+            message: "Comment created successfully",
+            comment: newComment,
+        });
+    }
+    catch (error) {
+        console.log("Comment Not Created:", error);
+        return res.status(500).json({
+            status: "Error",
+            message: "Failed to create comment",
+        });
+    }
+};
+export const getBlogComments = async (req, res) => {
+    try {
+        const { blogId } = req.params;
+        const blogIdString = String(blogId);
+        const comments = await client.comment.findMany({
+            where: { blogId: blogIdString },
+            orderBy: { createdAt: "desc" },
+            include: {
+                user: {
+                    select: {
+                        id: true,
+                        username: true,
+                        firstName: true,
+                        lastName: true,
+                    },
+                },
+            },
+        });
+        return res.status(200).json({
+            status: "Success",
+            message: "Comments fetched successfully",
+            comments,
+        });
+    }
+    catch (error) {
+        console.log("Comments Not Fetched:", error);
+        return res.status(500).json({
+            status: "Error",
+            message: "Failed to fetch comments",
         });
     }
 };

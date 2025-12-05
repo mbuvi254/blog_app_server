@@ -3,8 +3,8 @@
   "compilerOptions": {
     // File Layout
     // "rootDir": "./src",
-     "outDir": "./dist",
-     "typeRoots": ["./src/types", "./node_modules/@types"],
+    "outDir": "./dist",
+    "typeRoots": ["./src/types", "./node_modules/@types"],
 
     // Environment Settings
     // See also https://aka.ms/tsconfig/module
@@ -40,7 +40,7 @@
     "isolatedModules": true,
     "noUncheckedSideEffectImports": true,
     "moduleDetection": "force",
-    "skipLibCheck": true,
+    "skipLibCheck": true
   },
-  "include": ["src"],
+  "include": ["src"]
 }

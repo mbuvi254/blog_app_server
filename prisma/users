@@ -1,0 +1,5 @@
+id,firstName,lastName,emailAddress,username,password,isDeleted,createdAt,updatedAt
+14ef39b3-2365-4adf-a1d3-aabf432f954f,Daniel,Mulatya,mulatya@cm.co.ke,mulatya254,$2b$10$Wa3p0DUh5wd0RIz0faHhWuZkvy51CaKo4ZIIxrE6CeOif0YLLF876,0,2025-11-05 16:54:15.3540000,2025-11-06 08:14:49.2310000
+19e21857-2a5d-4465-8ad8-502f02e7730c,Dandon,Mbuvi,mbuvi@cm.co.ke,mbuvi254,$2b$10$Wa3p0DUh5wd0RIz0faHhWu32pQIpDsmgY/WR2V8AMpKqdoNuZaNXO,0,2025-11-06 07:41:00.1960000,2025-11-06 07:41:00.1960000
+4fb747db-8c5e-42f5-bc5f-052cfce0ea67,Dan,Mbu,mbu@cm.co.ke,mbu254,$2b$10$8kU3EpZ0ljY5AXqp9vHqy.9lJYJgdlYD54.Mqfli8SyLhFAzo.CrO,0,2025-11-24 07:17:08.1650000,2025-11-24 07:17:08.1650000
+884b38b3-b157-45ac-bc41-fe01c472c8fc,Jane,Itotia,jane@gmail.com,itotia254,$2b$10$jO2tYIenWycWFekqbLc1S.iROwK789Xwa.6kZFq2yBAk.F2W2jFiO,0,2025-11-24 12:22:56.8990000,2025-11-24 12:22:56.8990000

@@ -27,9 +27,7 @@ model User {
   
 
   blogs   Blog[]
-
-
-
+  comments Comment[]
   @@map("users")
 }
 
@@ -39,13 +37,28 @@ model Blog{
   title String @map("title")
   synopsis String @map("synopsis")
   featuredImageUrl String ? @map("featuredImageUrl")
-  content String @map("content")
-  isDelete Boolean @default(false) @map("isDeleted") 
+  content String  @map("content")
+  isDeleted Boolean @default(false) @map("isDeleted") 
+  isPublished Boolean @default(false) @map("isPublished")
   createdAt DateTime @default(now()) @map("createdAt")
   lastUpdated DateTime @updatedAt @map("lastUpdated")
+
   author User @relation(fields: [authorId],references: [id])
-
+  comments Comment[]
+  
 @@map("blogs")
+}
 
+model Comment {
+  id String @id @default(uuid()) @map("id")
+  blogId String @map("blogId")
+  userId String @map("userId")
+  comment String @map("comment")
+  createdAt DateTime @default(now()) @map("createdAt")
+  lastUpdated DateTime @updatedAt @map("lastUpdated")
+  blog Blog @relation(fields: [blogId],references: [id], onUpdate: NoAction, onDelete: NoAction)
+  user User @relation(fields: [userId],references: [id], onUpdate: NoAction, onDelete: NoAction)
+
+@@map("comments")
 
 }

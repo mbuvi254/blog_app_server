@@ -17,7 +17,7 @@ export const getUser = async (req, res) => {
         const { id } = req.params;
         const userId = String(id);
         const user = await client.user.findUnique({
-            where: { id: userId }
+            where: { id: userId },
         });
         if (!user) {
             console.log("No user found");
@@ -29,7 +29,6 @@ export const getUser = async (req, res) => {
         console.error("Database Error:", error);
         return res.status(500).json({ message: "Something Went Wrong" });
     }
-    ;
 };
 export const updateUser = async (req, res) => {
     try {
@@ -40,25 +39,25 @@ export const updateUser = async (req, res) => {
             console.log("All fields required");
             return res.status(400).json({
                 status: "Error",
-                message: "Something Went Wrong"
+                message: "Something Went Wrong",
             });
         }
         const updatedUser = await client.user.update({
             where: { id: userId },
-            data: { username, firstName, lastName }
+            data: { username, firstName, lastName },
         });
         console.log(`User updated ${updatedUser.username}`);
         return res.status(200).json({
             status: "Success",
             message: "User Updated Successfully",
-            user: updatedUser
+            user: updatedUser,
         });
     }
     catch (error) {
         console.error("Error occured during user update:", error);
         return res.status(500).json({
             status: "Error",
-            message: "Something Went Wrong"
+            message: "Something Went Wrong",
         });
     }
 };
@@ -68,24 +67,23 @@ export const deleteUser = async (req, res) => {
         const userId = String(id);
         const deletedUser = await client.user.update({
             where: { id: userId },
-            data: { isDeleted: true }
+            data: { isDeleted: true },
         });
         if (!deletedUser) {
             console.log("Error deleting User");
             return res.status(404).json({
                 status: "Error",
-                message: "User not Found"
+                message: "User not Found",
             });
         }
         return res.status(200).json({
             status: "Success",
-            message: "User deleted successfully"
+            message: "User deleted successfully",
         });
     }
     catch (error) {
         console.error("Database Error:", error);
         return res.status(500).json({ message: "Something Went Wrong" });
     }
-    ;
 };
 //# sourceMappingURL=userServices.js.map

@@ -1,17 +1,51 @@
-//blogRouter
-import { createNewBlog,getAllBlogs,getBlog,updateBlog,restoreBlog,deleteBlog,trashBlog} from "../controllers/blogsController.js";
-import express,{type Request,type Response,type Router} from 'express';
-import { verifyToken } from '../middlewares/authMiddleware.js';
+//blogRouter.ts
+import {
+  createNewBlog,
+  getAllBlogs,
+  getBlog,
+  updateBlog,
+  restoreBlog,
+  deleteBlog,
+  trashBlog,
+  getUserBlogs,
+  getTrashedBlogs,
+  getBlogDrafts,
+  publishBlog,
+  getPublishedBlogs,
+  unpublishBlog,
+  createComment,
+  getBlogComments,
+} from "../controllers/blogsController.js";
+import express, { type Request, type Response, type Router } from "express";
+import { verifyToken } from "../middlewares/authMiddleware.js";
 
-const blogRouter:Router =express.Router();
+const blogRouter: Router = express.Router();
 
+// Create
+blogRouter.post("/", verifyToken, createNewBlog);
 
-blogRouter.post("/",verifyToken,createNewBlog);
-blogRouter.get("/",verifyToken,getAllBlogs);
-blogRouter.get("/:id",verifyToken,getBlog);
-blogRouter.delete("/:id",verifyToken,deleteBlog);
-blogRouter.patch("/:id",verifyToken,updateBlog);
-blogRouter.patch("/restore/:id",verifyToken,restoreBlog);
-blogRouter.patch("/trash/:id",verifyToken,trashBlog);
+// Read
+blogRouter.get("/all", verifyToken, getAllBlogs);
+blogRouter.get("/", verifyToken, getUserBlogs);
+blogRouter.get("/published", verifyToken, getPublishedBlogs);
+blogRouter.get("/draft", verifyToken, getBlogDrafts);
+blogRouter.get("/trash", verifyToken, getTrashedBlogs);
+blogRouter.get("/:id", verifyToken, getBlog);
 
-export default blogRouter
+// Update
+blogRouter.patch("/:id", verifyToken, updateBlog);
+
+// State Changes
+blogRouter.patch("/publish/:id", verifyToken, publishBlog);
+blogRouter.patch("/unpublish/:id", verifyToken, unpublishBlog);
+blogRouter.patch("/trash/:id", verifyToken, trashBlog);
+blogRouter.patch("/restore/:id", verifyToken, restoreBlog);
+
+// Delete
+blogRouter.delete("/:id", verifyToken, deleteBlog);
+
+// Comment
+blogRouter.post("/comments", verifyToken, createComment);
+blogRouter.get("/comments/:blogId", verifyToken, getBlogComments);
+
+export default blogRouter;

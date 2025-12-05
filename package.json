@@ -17,7 +17,7 @@
   "version": "1.0.0",
   "main": "dist/app.js",
   "dependencies": {
-    "@prisma/client": "^6.18.0",
+    "@prisma/client": "^6.19.0",
     "bcryptjs": "^3.0.3",
     "c12": "^3.1.0",
     "chokidar": "^4.0.3",
@@ -49,12 +49,14 @@
     "readdirp": "^4.1.2",
     "tinyexec": "^1.0.1",
     "tsc": "^2.0.4",
+    "zustand": "^5.0.9",
     "zxcvbn": "^4.4.2"
   },
   "type": "module",
   "scripts": {
     "server": "nodemon dist/app.js",
-    "build": "tsc"
+    "build": "npx tsc",
+    "clean": "rm -rf dist"
   },
   "keywords": [
     "typescript",

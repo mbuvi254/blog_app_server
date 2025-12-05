@@ -1,36 +1,34 @@
 import jwt, {} from "jsonwebtoken";
 import express, {} from "express";
+import client from "../config/database.js";
 const SECRET_KEY = process.env.JWT_SECRET;
-if (!SECRET_KEY) {
+if (!SECRET_KEY)
     throw new Error("JWT_SECRET is not found");
-}
-// Verify JWT Token Middleware Make sure my users have valid token 
-export function verifyToken(req, res, next) {
+export async function verifyToken(req, res, next) {
     try {
-        //I Get Token from cookies or headers
-        const access_token = req.cookies.accessToken ||
-            req.headers.authorization?.split(" ")[1];
-        console.log("Access Token:", access_token);
-        if (!access_token) {
-            return res.status(401).json({
-                status: "Error",
-                message: "Access Token not available"
-            });
+        const accessToken = req.cookies.accessToken || req.headers.authorization?.split(" ")[1];
+        if (!accessToken) {
+            return res
+                .status(401)
+                .json({ status: "Error", message: "Access Token not available" });
         }
-        const decoded = jwt.verify(access_token, SECRET_KEY);
-        //add the decoded data to the request 
-        //(req as any).user = decoded;
-        req.user = { id: decoded.id, username: decoded.username };
+        // Decode token
+        const decoded = jwt.verify(accessToken, SECRET_KEY);
+        // Fetch full user from DB
+        const user = await client.user.findUnique({ where: { id: decoded.id } });
+        if (!user)
+            return res
+                .status(401)
+                .json({ status: "Error", message: "User not found" });
+        // Attach full user to request
+        req.user = user;
         next();
     }
     catch (error) {
-        console.error("Invalid Access Token");
-        res.status(401).json({
-            status: "Error",
-            message: "Invalid Access Token"
-        });
-        // return null;
+        console.error("Invalid Access Token", error);
+        return res
+            .status(401)
+            .json({ status: "Error", message: "Invalid Access Token" });
     }
 }
-;
 //# sourceMappingURL=authMiddleware.js.map

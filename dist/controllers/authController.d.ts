@@ -1,13 +1,7 @@
 import { type Request, type Response } from "express";
-interface AuthenticatedRequest extends Request {
-    user?: {
-        id: string;
-        username: string;
-    };
-}
 export declare const registerUser: (req: Request, res: Response) => Promise<Response<any, Record<string, any>>>;
 export declare const loginUser: (req: Request, res: Response) => Promise<Response<any, Record<string, any>>>;
 export declare const logoutUser: (req: Request, res: Response) => Promise<Response<any, Record<string, any>>>;
-export declare const updateUserPassword: (req: AuthenticatedRequest, res: Response) => Promise<Response<any, Record<string, any>>>;
-export {};
+export declare const updateUserPassword: (req: Request, res: Response) => Promise<Response<any, Record<string, any>>>;
+export declare const getCurrentUser: (req: Request, res: Response) => Promise<Response<any, Record<string, any>>>;
 //# sourceMappingURL=authController.d.ts.map

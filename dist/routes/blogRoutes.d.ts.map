@@ -1,1 +1,1 @@
-{"version":3,"file":"blogRoutes.d.ts","sourceRoot":"","sources":["../../src/routes/blogRoutes.ts"],"names":[],"mappings":"AAEA,OAAe,EAA4B,KAAK,MAAM,EAAC,MAAM,SAAS,CAAC;AAGvE,QAAA,MAAM,UAAU,EAAC,MAAwB,CAAC;AAW1C,eAAe,UAAU,CAAA"}
+{"version":3,"file":"blogRoutes.d.ts","sourceRoot":"","sources":["../../src/routes/blogRoutes.ts"],"names":[],"mappings":"AAkBA,OAAgB,EAA+B,KAAK,MAAM,EAAE,MAAM,SAAS,CAAC;AAG5E,QAAA,MAAM,UAAU,EAAE,MAAyB,CAAC;AA6B5C,eAAe,UAAU,CAAC"}

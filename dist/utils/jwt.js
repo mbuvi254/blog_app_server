@@ -8,7 +8,6 @@ if (!SECRET_KEY) {
 // Generate JWT Token
 export function generateToken(id, username) {
     const payload = { id, username };
-    return jwt.sign(payload, SECRET_KEY, { expiresIn: "1h" });
+    return jwt.sign(payload, SECRET_KEY, { expiresIn: "1d" });
 }
-;
 //# sourceMappingURL=jwt.js.map
