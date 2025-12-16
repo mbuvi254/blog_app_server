@@ -64,6 +64,7 @@ export const getAllBlogs = async (req: Request, res: Response) => {
         id: true,
         title: true,
         synopsis: true,
+        content: true,
         featuredImageUrl: true,
         createdAt: true,
         author: {
@@ -76,9 +77,10 @@ export const getAllBlogs = async (req: Request, res: Response) => {
       },
     });
     if (!blogs.length) {
-      return res.status(404).json({
-        status: "Error",
+      return res.status(200).json({
+        status: "success",
         message: "No blogs found",
+        blogs: [],
       });
     }
     return res.status(200).json({
@@ -118,6 +120,7 @@ export const getUserBlogs = async (
         authorId: true,
         title: true,
         synopsis: true,
+        content: true,
         featuredImageUrl: true,
         isPublished: true,
         createdAt: true,
@@ -170,6 +173,7 @@ export const getPublishedBlogs = async (
         authorId: true,
         title: true,
         synopsis: true,
+        content: true,
         featuredImageUrl: true,
         isPublished: true,
         createdAt: true,
@@ -212,6 +216,7 @@ export const getBlog = async (req: AuthenticatedRequest, res: Response) => {
         authorId: true,
         title: true,
         synopsis: true,
+        content: true,
         featuredImageUrl: true,
         isPublished: true,
         createdAt: true,
@@ -260,6 +265,7 @@ export const updateBlog = async (req: AuthenticatedRequest, res: Response) => {
         authorId: true,
         title: true,
         synopsis: true,
+        content: true,
         featuredImageUrl: true,
         isPublished: true,
         createdAt: true,
@@ -423,6 +429,7 @@ export const getTrashedBlogs = async (
         id: true,
         title: true,
         synopsis: true,
+        content: true,
         featuredImageUrl: true,
         createdAt: true,
         author: {
@@ -433,12 +440,12 @@ export const getTrashedBlogs = async (
         },
       },
     });
-    if (!blogs.length) {
-      return res.status(404).json({
-        status: "Error",
-        message: "No blogs found",
-      });
-    }
+    // if (!blogs.length) {
+    //   return res.status(404).json({
+    //     status: "Error",
+    //     message: "No blogs found",
+    //   });
+    // }
     return res.status(200).json({
       status: "success",
       message: `Found:${blogs.length} blog(s)`,
@@ -463,6 +470,7 @@ export const getBlogDrafts = async (
         authorId: true,
         title: true,
         synopsis: true,
+        content: true,
         featuredImageUrl: true,
         isPublished: true,
         isDeleted: true,

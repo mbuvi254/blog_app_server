@@ -11,6 +11,7 @@ export const getPublicBlogs = async (req, res) => {
                 id: true,
                 title: true,
                 synopsis: true,
+                content: true,
                 featuredImageUrl: true,
                 createdAt: true,
                 author: {
@@ -23,9 +24,10 @@ export const getPublicBlogs = async (req, res) => {
             },
         });
         if (!blogs.length) {
-            return res.status(404).json({
-                status: "Error",
+            return res.status(200).json({
+                status: "success",
                 message: "No blogs found",
+                blogs: [],
             });
         }
         return res.status(200).json({
@@ -44,12 +46,16 @@ export const getPublicBlogs = async (req, res) => {
 export const getPublicBlog = async (req, res) => {
     try {
         const { id } = req.params;
-        const blogId = String(id);
-        const blog = await client.blog.findUnique({
+        const blog = await client.blog.findFirst({
             where: {
-                id: blogId,
+                id,
                 isDeleted: false,
                 isPublished: true,
+            },
+            include: {
+                author: {
+                    select: { firstName: true, lastName: true, emailAddress: true },
+                },
             },
         });
         if (!blog) {
@@ -60,14 +66,46 @@ export const getPublicBlog = async (req, res) => {
         }
         return res.status(200).json({
             status: "success",
-            message: `Found:${blog} blog(s)`,
-            blog: blog,
+            message: "Blog fetched successfully",
+            blog,
         });
     }
     catch (error) {
-        return res.status(404).json({
+        console.error("Error fetching blog:", error);
+        return res.status(500).json({
             status: "Error",
-            message: "No blog found",
+            message: "Failed to fetch blog",
+        });
+    }
+};
+export const getBlogComments = async (req, res) => {
+    try {
+        const { blogId } = req.params;
+        const comments = await client.comment.findMany({
+            where: { blogId },
+            orderBy: { createdAt: "desc" },
+            include: {
+                user: {
+                    select: {
+                        id: true,
+                        username: true,
+                        firstName: true,
+                        lastName: true,
+                    },
+                },
+            },
+        });
+        return res.status(200).json({
+            status: "success",
+            message: `${comments.length} comment(s) fetched successfully`,
+            comments,
+        });
+    }
+    catch (error) {
+        console.error("Comments not fetched:", error);
+        return res.status(500).json({
+            status: "error",
+            message: "Failed to fetch comments",
         });
     }
 };
